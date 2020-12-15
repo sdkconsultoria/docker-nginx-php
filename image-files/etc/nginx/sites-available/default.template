@@ -7,6 +7,8 @@ server {
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+
+        fastcgi_param PHP_VALUE "xdebug.remote_host=${HOST_IP}";
     }
     location / {
         try_files $uri $uri/ /index.php?$query_string;

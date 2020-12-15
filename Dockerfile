@@ -16,6 +16,7 @@ RUN apt-get install unzip  -y
 RUN add-apt-repository ppa:ondrej/php && \
     apt-get update && \
     apt-get -y install \
+            gettext \
             zip \
             curl \
             nginx \
@@ -29,7 +30,6 @@ RUN add-apt-repository ppa:ondrej/php && \
             php7.4-zip \
             php7.4-xml \
             php7.4-xdebug \
-            php7.4-pcov \
             php7.4-redis \
        --no-install-recommends && \
        apt-get clean && \
@@ -59,9 +59,12 @@ RUN mkdir ~/.ssh && ln -s /run/secrets/host_ssh_key ~/.ssh/id_rsa
 WORKDIR /var/www/public
 
 EXPOSE 80
-EXPOSE 9000
 
 RUN usermod -u 1000 www-data
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
- CMD service php7.4-fpm start && nginx
+COPY image-files/docker-entrypoint.sh /
+RUN ["chmod", "+x", "/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD service php7.4-fpm start && nginx
